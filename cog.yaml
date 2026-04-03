@@ -9,5 +9,6 @@ build:
     - pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
     - pip install "git+https://github.com/lashahub/transformers@modular-mf" accelerate
     - pip install librosa fastapi uvicorn python-multipart
+    - python download_weights.py
 
 predict: "predict.py:Predictor"
