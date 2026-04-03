@@ -30,9 +30,12 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           # Get the latest version that was just pushed
-          VERSION=$(curl -s -H "Authorization: Bearer $REPLICATE_API_TOKEN" \
-            https://api.replicate.com/v1/models/rwnalds/music-flamingo/versions \
-            | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['id'])")
+          VERSIONS_RESPONSE=$(curl -s -H "Authorization: Bearer $REPLICATE_API_TOKEN" \
+            https://api.replicate.com/v1/models/rwnalds/music-flamingo/versions)
+          echo "Versions response: $VERSIONS_RESPONSE"
+          VERSION=$(echo $VERSIONS_RESPONSE \
+            | python3 -c "import sys,json; data=json.load(sys.stdin); print(list(data.items()))" || true)
+          echo "Parsed version: $VERSION"
 
           echo "Latest version: $VERSION"
 
