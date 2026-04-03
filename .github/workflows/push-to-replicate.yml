@@ -18,7 +18,7 @@ jobs:
 
       - name: Push to Replicate
         env:
-          REPLICATE_CLI_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          REPLICATE_CLI_TOKEN: ${{ secrets.REPLICATE_CLI_TOKEN }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           echo $REPLICATE_CLI_TOKEN | cog login --token-stdin
