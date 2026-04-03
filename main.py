@@ -2,13 +2,13 @@
 import tempfile
 import os
 from fastapi import FastAPI, UploadFile
-from transformers import AudioFlamingo3ForConditionalGeneration, AutoProcessor
+from transformers import MusicFlamingoForConditionalGeneration, AutoProcessor
 import torch
 
 app = FastAPI()
-model_id = "nvidia/music-flamingo-hf"
+model_id = "nvidia/music-flamingo-2601-hf"
 processor = AutoProcessor.from_pretrained(model_id)
-model = AudioFlamingo3ForConditionalGeneration.from_pretrained(
+model = MusicFlamingoForConditionalGeneration.from_pretrained(
     model_id, device_map="auto", torch_dtype=torch.bfloat16
 )
 

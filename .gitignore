@@ -1,0 +1,9 @@
+song.mp3
+*.mp3
+*.wav
+*.flac
+.env
+node_modules/
+__pycache__/
+*.pyc
+.cog/
