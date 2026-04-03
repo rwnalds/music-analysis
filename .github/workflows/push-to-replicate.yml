@@ -23,4 +23,4 @@ jobs:
         env:
           REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
         run: |
-          cog push r8.im/your-username/music-flamingo
+          cog push r8.im/rwnalds/music-flamingo
