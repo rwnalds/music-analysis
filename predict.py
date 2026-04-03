@@ -2,15 +2,20 @@ import tempfile
 import os
 from cog import BasePredictor, Input, Path
 from transformers import MusicFlamingoForConditionalGeneration, AutoProcessor
+from huggingface_hub import login
 import torch
 
 MODEL_ID = "nvidia/music-flamingo-2601-hf"
 
 class Predictor(BasePredictor):
     def setup(self):
-        self.processor = AutoProcessor.from_pretrained(MODEL_ID)
+        hf_token = os.environ.get("HF_TOKEN")
+        if hf_token:
+            login(token=hf_token)
+
+        self.processor = AutoProcessor.from_pretrained(MODEL_ID, token=hf_token)
         self.model = MusicFlamingoForConditionalGeneration.from_pretrained(
-            MODEL_ID, device_map="auto", torch_dtype=torch.bfloat16
+            MODEL_ID, device_map="auto", torch_dtype=torch.bfloat16, token=hf_token
         )
         self.model.eval()
 

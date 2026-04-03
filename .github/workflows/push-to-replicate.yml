@@ -23,3 +23,28 @@ jobs:
         run: |
           echo $REPLICATE_API_TOKEN | cog login --token-stdin
           cog push r8.im/rwnalds/music-flamingo
+
+      - name: Create or update Deployment with env vars
+        env:
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Get the latest version that was just pushed
+          VERSION=$(curl -s -H "Authorization: Bearer $REPLICATE_API_TOKEN" \
+            https://api.replicate.com/v1/models/rwnalds/music-flamingo/versions \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['id'])")
+
+          echo "Latest version: $VERSION"
+
+          # Create or update deployment with HF_TOKEN injected
+          curl -s -X PUT \
+            -H "Authorization: Bearer $REPLICATE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            https://api.replicate.com/v1/deployments/rwnalds/music-flamingo \
+            -d "{
+              \"version\": \"$VERSION\",
+              \"hardware\": \"gpu-a100-80gb\",
+              \"environment_variables\": {
+                \"HF_TOKEN\": \"$HF_TOKEN\"
+              }
+            }"
