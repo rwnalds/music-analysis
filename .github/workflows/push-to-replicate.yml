@@ -35,7 +35,8 @@ jobs:
 
           echo "Latest version: $VERSION"
 
-          curl -s -X PUT \
+          # Try to update existing deployment, create if it doesn't exist
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH \
             -H "Authorization: Bearer $REPLICATE_API_KEY" \
             -H "Content-Type: application/json" \
             https://api.replicate.com/v1/deployments/rwnalds/music-flamingo \
@@ -45,4 +46,23 @@ jobs:
               \"environment_variables\": {
                 \"HF_TOKEN\": \"$HF_TOKEN\"
               }
-            }"
+            }")
+
+          if [ "$RESPONSE" = "404" ]; then
+            echo "Deployment not found, creating..."
+            curl -s -X POST \
+              -H "Authorization: Bearer $REPLICATE_API_KEY" \
+              -H "Content-Type: application/json" \
+              https://api.replicate.com/v1/deployments \
+              -d "{
+                \"name\": \"music-flamingo\",
+                \"model\": \"rwnalds/music-flamingo\",
+                \"version\": \"$VERSION\",
+                \"hardware\": \"gpu-a100-80gb\",
+                \"environment_variables\": {
+                  \"HF_TOKEN\": \"$HF_TOKEN\"
+                }
+              }"
+          else
+            echo "Deployment updated (HTTP $RESPONSE)"
+          fi
